@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edits — Adhish Shijin</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23000'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='13' fill='%232997ff'>AS</text></svg>">
+<style>
+  :root{
+    --bg:#000000;
+    --panel:#111114;
+    --text:#f5f5f7;
+    --text-dim:#86868b;
+    --accent:#2997ff;
+    --line:rgba(255,255,255,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Helvetica,Arial,sans-serif;
+    overflow-x:hidden;
+    cursor:none;
+  }
+
+  /* CUSTOM CURSOR */
+  #cursor{
+    position:fixed; pointer-events:none; z-index:10000;
+    width:10px; height:10px; border-radius:50%;
+    background:var(--accent); transform:translate(-50%,-50%);
+    transition:width .2s ease, height .2s ease, background .2s ease;
+  }
+  #cursorRing{
+    position:fixed; pointer-events:none; z-index:9999;
+    width:36px; height:36px; border-radius:50%;
+    border:1.5px solid rgba(41,151,255,0.5);
+    transform:translate(-50%,-50%);
+    transition:width .2s ease, height .2s ease, border-color .2s ease;
+  }
+  body:has(a:hover) #cursor,
+  body:has(button:hover) #cursor{ width:16px; height:16px; background:#fff; }
+  body:has(a:hover) #cursorRing,
+  body:has(button:hover) #cursorRing{ width:48px; height:48px; border-color:rgba(255,255,255,0.3); }
+
+  /* PARTICLES */
+  #particles{ position:fixed; inset:0; z-index:0; pointer-events:none; }
+
+  /* SCROLL PROGRESS */
+  #scrollBar{
+    position:fixed; top:0; left:0; z-index:200;
+    height:2px; width:0%; background:var(--accent);
+  }
+
+  /* CURSOR GLOW */
+  .cursor-glow{
+    position:fixed; pointer-events:none; z-index:9997;
+    width:400px; height:400px; border-radius:50%;
+    background:radial-gradient(circle, rgba(41,151,255,0.1) 0%, transparent 70%);
+    transform:translate(-50%,-50%); transition:opacity .3s ease; opacity:0;
+  }
+
+  /* NAV */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:18px 5%;
+    backdrop-filter:blur(20px) saturate(180%);
+    -webkit-backdrop-filter:blur(20px) saturate(180%);
+    background:rgba(0,0,0,0.55);
+    border-bottom:1px solid var(--line);
+  }
+  nav .logo{ font-weight:600; font-size:18px; letter-spacing:-0.02em; text-decoration:none; color:var(--text); }
+  nav ul{ list-style:none; display:flex; gap:32px; }
+  nav a{ color:var(--text-dim); text-decoration:none; font-size:13px; transition:color .25s; }
+  nav a:hover{ color:var(--text); }
+
+  /* HAMBURGER */
+  .hamburger{
+    display:none; flex-direction:column; gap:5px;
+    background:none; border:none; padding:4px; cursor:none;
+  }
+  .hamburger span{
+    display:block; width:22px; height:2px;
+    background:var(--text); border-radius:2px;
+    transition:transform .3s ease, opacity .3s ease;
+  }
+  .hamburger.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2){ opacity:0; }
+  .hamburger.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+  /* MOBILE MENU */
+  .mobile-menu{
+    display:none; position:fixed; top:57px; left:0; right:0; z-index:99;
+    background:rgba(0,0,0,0.92); backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--line); flex-direction:column;
+    padding:16px 5%; gap:0;
+    transform:translateY(-10px); opacity:0;
+    transition:transform .3s ease, opacity .3s ease;
+    pointer-events:none;
+  }
+  .mobile-menu.open{ transform:translateY(0); opacity:1; pointer-events:all; }
+  .mobile-menu a{
+    color:var(--text-dim); text-decoration:none; font-size:16px;
+    padding:14px 0; border-bottom:1px solid var(--line); transition:color .2s;
+  }
+  .mobile-menu a:last-child{ border-bottom:none; }
+  .mobile-menu a:hover{ color:var(--text); }
+
+  /* PAGE HEADER */
+  .page-header{
+    position:relative; z-index:1;
+    padding:160px 5% 80px; text-align:center;
+    background:radial-gradient(ellipse 80% 50% at 50% 0%, rgba(41,151,255,0.15), transparent 60%);
+  }
+  .page-header .tag{
+    color:var(--accent); font-size:13px; font-weight:600;
+    text-transform:uppercase; letter-spacing:0.08em;
+    opacity:0; animation:fadeUp .8s ease forwards .1s;
+  }
+  .page-header h1{
+    font-size:clamp(40px,7vw,88px); font-weight:700; letter-spacing:-0.04em; line-height:1.02;
+    background:linear-gradient(180deg,#fff 30%,#a1a1a6 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    margin-top:12px;
+    opacity:0; animation:fadeUp .9s ease forwards .25s;
+  }
+  .page-header p{
+    color:var(--text-dim); font-size:18px; margin-top:16px;
+    opacity:0; animation:fadeUp .9s ease forwards .4s;
+  }
+
+  @keyframes fadeUp{
+    from{opacity:0; transform:translateY(18px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  /* EDITS GRID */
+  .edits-section{
+    position:relative; z-index:1;
+    max-width:1180px; margin:0 auto; padding:60px 5% 140px;
+    display:flex; flex-direction:column; gap:80px;
+  }
+  .edit-card{
+    display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center;
+    opacity:0; transform:translateY(30px);
+    transition:opacity .8s ease, transform .8s ease;
+  }
+  .edit-card.in{ opacity:1; transform:translateY(0); }
+  .edit-card:nth-child(even){ direction:rtl; }
+  .edit-card:nth-child(even) > *{ direction:ltr; }
+
+  .edit-video{
+    border-radius:24px; overflow:hidden;
+    border:1px solid var(--line); background:var(--panel);
+  }
+  .edit-video video{ width:100%; display:block; aspect-ratio:16/9; background:#000; }
+
+  .edit-info{ display:flex; flex-direction:column; gap:16px; }
+  .edit-number{
+    font-size:12px; color:var(--accent); font-weight:600;
+    text-transform:uppercase; letter-spacing:0.08em;
+  }
+  .edit-info h2{
+    font-size:clamp(28px,3.5vw,44px); font-weight:700; letter-spacing:-0.03em; line-height:1.1;
+  }
+  .edit-info p{ color:var(--text-dim); font-size:16px; line-height:1.6; }
+  .edit-tags{ display:flex; flex-wrap:wrap; gap:10px; margin-top:8px; }
+  .edit-tag{
+    padding:6px 16px; border:1px solid var(--line); border-radius:980px;
+    font-size:13px; color:var(--text-dim);
+  }
+
+  footer{
+    position:relative; z-index:1;
+    text-align:center; padding:40px 5%; color:var(--text-dim); font-size:13px;
+    border-top:1px solid var(--line);
+  }
+
+  @media (max-width:768px){
+    .edit-card{ grid-template-columns:1fr; }
+    .edit-card:nth-child(even){ direction:ltr; }
+    nav ul{ display:none; }
+    .hamburger{ display:flex; }
+    .mobile-menu{ display:flex; }
+    body{ cursor:auto; }
+    #cursor, #cursorRing{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursorRing"></div>
+<canvas id="particles"></canvas>
+<div id="scrollBar"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<nav>
+  <a href="index.html" class="logo">Adhish Shijin</a>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html" onclick="closeMobile()">Home</a>
+  <a href="index.html#about" onclick="closeMobile()">About</a>
+  <a href="index.html#contact" onclick="closeMobile()">Contact</a>
+</div>
+
+<div class="page-header">
+  <div class="tag">All Edits</div>
+  <h1>The work speaks.</h1>
+  <p>Every edit is a study in sync, pacing, and impact.</p>
+</div>
+
+<div class="edits-section">
+
+  <div class="edit-card">
+    <div class="edit-video">
+      <video controls preload="metadata" poster="my-thumbnail.jpeg">
+        <source src="BestEdit.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="edit-info">
+      <div class="edit-number">Edit 01</div>
+      <h2>Best Edit</h2>
+      <p>A high-energy anime edit built around tight beat sync and smooth transitions. Every cut timed to hit with the music.</p>
+      <div class="edit-tags">
+        <span class="edit-tag">Beat Sync</span>
+        <span class="edit-tag">Transitions</span>
+        <span class="edit-tag">Color Grading</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="edit-card">
+    <div class="edit-video">
+      <video controls preload="metadata">
+        <source src="Edit2.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="edit-info">
+      <div class="edit-number">Edit 02</div>
+      <h2>Yuta's Entrance</h2>
+      <p>A cinematic, slow-burn edit capturing Yuta Okkotsu's first entrance. Moody pacing, smooth cuts, and a quiet intensity that lets the scene breathe.</p>
+      <div class="edit-tags">
+        <span class="edit-tag">Cinematic</span>
+        <span class="edit-tag">Slow Burn</span>
+        <span class="edit-tag">JJK</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  © <span id="yr"></span> Adhish Shijin. Built with care.
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // Scroll progress
+  window.addEventListener('scroll', ()=>{
+    const el = document.documentElement;
+    const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
+    document.getElementById('scrollBar').style.width = pct + '%';
+  });
+
+  // Reveal cards
+  const cards = document.querySelectorAll('.edit-card');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:0.15});
+  cards.forEach(c=>io.observe(c));
+
+  // Hamburger
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', ()=>{
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+  });
+  function closeMobile(){
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+  }
+
+  // Custom cursor
+  const cur = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let cx=0,cy=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e=>{ cx=e.clientX; cy=e.clientY; });
+  (function animCursor(){
+    rx+=(cx-rx)*0.12; ry+=(cy-ry)*0.12;
+    cur.style.left=cx+'px'; cur.style.top=cy+'px';
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    requestAnimationFrame(animCursor);
+  })();
+
+  // Cursor glow
+  const glow = document.getElementById('cursorGlow');
+  let glowX=0,glowY=0,mouseX=0,mouseY=0;
+  document.addEventListener('mousemove', e=>{ mouseX=e.clientX; mouseY=e.clientY; glow.style.opacity='1'; });
+  document.addEventListener('mouseleave',()=>{ glow.style.opacity='0'; });
+  (function animGlow(){
+    glowX+=(mouseX-glowX)*0.06; glowY+=(mouseY-glowY)*0.06;
+    glow.style.left=glowX+'px'; glow.style.top=glowY+'px';
+    requestAnimationFrame(animGlow);
+  })();
+
+  // Particles
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles=[];
+  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  function Particle(){
+    this.x=Math.random()*W; this.y=Math.random()*H;
+    this.r=Math.random()*1.5+0.3;
+    this.speedX=(Math.random()-0.5)*0.3; this.speedY=(Math.random()-0.5)*0.3;
+    this.alpha=Math.random()*0.5+0.1;
+  }
+  for(let i=0;i<90;i++) particles.push(new Particle());
+  (function animParticles(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{
+      p.x+=p.speedX; p.y+=p.speedY;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(41,151,255,${p.alpha})`; ctx.fill();
+    });
+    requestAnimationFrame(animParticles);
+  })();
+</script>
+</body>
+</html>
